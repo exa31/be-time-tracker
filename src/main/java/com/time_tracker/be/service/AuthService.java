@@ -33,7 +33,7 @@ public class AuthService {
         UserModel user = userRepository.findByEmail(email);
 
         if (user == null) {
-            throw new NotFoundException("Email tidak ditemukan");
+            throw new BadRequestException("Password salah atau email tidak terdaftar");
         }
 
         boolean passwordMatch = PasswordUtil.matches(password, user.getPassword());

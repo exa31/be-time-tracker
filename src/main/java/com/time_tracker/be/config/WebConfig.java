@@ -1,4 +1,4 @@
-package com.time_tracker.be;
+package com.time_tracker.be.config;
 
 import com.time_tracker.be.resolver.CurrentUserResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.List;
 
 @Configuration
-public class WebConfiguration implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
     private CurrentUserResolver userArgumentResolver;
