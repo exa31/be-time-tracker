@@ -3,6 +3,7 @@ package com.time_tracker.be.service;
 import com.time_tracker.be.dto.TimeSessionDto;
 import com.time_tracker.be.exception.BadRequestException;
 import com.time_tracker.be.exception.NotAuthorizedException;
+import com.time_tracker.be.exception.NotFoundException;
 import com.time_tracker.be.model.ResponseModel;
 import com.time_tracker.be.model.TimeSessionModel;
 import com.time_tracker.be.model.UserModel;
@@ -52,6 +53,29 @@ public class TimeSessionService {
         responseModel.setSuccess(true);
         responseModel.setMessage("Time sessions retrieved successfully");
         responseModel.setData(timeSessionDtos);
+        return ResponseEntity.ok(responseModel);
+    }
+
+    public ResponseEntity<ResponseModel<TimeSessionDto>> getActiveTimeSession(Long userId) {
+        // Fetch the latest time session for the user
+        UserModel userModel = new UserModel();
+        userModel.setId_user(userId);
+        TimeSessionModel timeSessionModel = timeSessionRepository.findLatestByIdUser(userModel);
+        if (timeSessionModel == null || timeSessionModel.getEndTime() != null) {
+            throw new NotFoundException("No active time session found");
+        }
+
+        TimeSessionDto timeSessionDto = TimeSessionDto.builder()
+                .idUser(userId)
+                .startTime(timeSessionModel.getStartTime())
+                .endTime(timeSessionModel.getEndTime())
+                .idTimeSession(timeSessionModel.getIdTimeSession())
+                .build();
+
+        ResponseModel<TimeSessionDto> responseModel = new ResponseModel<>();
+        responseModel.setSuccess(true);
+        responseModel.setMessage("Active time session retrieved successfully");
+        responseModel.setData(timeSessionDto);
         return ResponseEntity.ok(responseModel);
     }
 

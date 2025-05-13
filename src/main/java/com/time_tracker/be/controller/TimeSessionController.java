@@ -29,6 +29,12 @@ public class TimeSessionController {
         log.info("Get all time sessions for user: {}", userId);
         return timeSessionService.getAllTimeSessions(userId);
     }
+    @GetMapping("/active")
+    public ResponseEntity<ResponseModel<TimeSessionDto>> getActiveTimeSession(@CurrentUser CurrentUserDto currentUser) {
+        Long userId = currentUser.getId_user();
+        log.info("Get active time session for user: {}", userId);
+        return timeSessionService.getActiveTimeSession(userId);
+    }
 
     @PostMapping("/start")
     public ResponseEntity<ResponseModel<TimeSessionDto>> createTimeSession(@CurrentUser CurrentUserDto currentUser, TimeSessionModel timeSessionModel) {
@@ -43,4 +49,5 @@ public class TimeSessionController {
         Long userId = currentUser.getId_user();
         return timeSessionService.stopTimeSession(userId);
     }
+
 }
