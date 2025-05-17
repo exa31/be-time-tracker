@@ -37,7 +37,7 @@ public class TimeSessionController {
     }
 
     @PostMapping("/start")
-    public ResponseEntity<ResponseModel<TimeSessionDto>> createTimeSession(@CurrentUser CurrentUserDto currentUser, TimeSessionModel timeSessionModel) {
+    public ResponseEntity<ResponseModel<TimeSessionDto>> createTimeSession(@CurrentUser CurrentUserDto currentUser) {
         log.info("Create time session");
         log.info("Current user: {}", currentUser);
         Long userId = currentUser.getId_user();
@@ -45,9 +45,15 @@ public class TimeSessionController {
     }
 
     @PutMapping("/stop")
-    public ResponseEntity<ResponseModel<TimeSessionDto>> stopTimeSession(@CurrentUser CurrentUserDto currentUser, TimeSessionModel timeSessionModel) {
+    public ResponseEntity<ResponseModel<TimeSessionDto>> stopTimeSession(@CurrentUser CurrentUserDto currentUser) {
         Long userId = currentUser.getId_user();
         return timeSessionService.stopTimeSession(userId);
+    }
+
+    @PutMapping("/{id}/update")
+    public ResponseEntity<ResponseModel<TimeSessionDto>> updateTimeSession(@CurrentUser CurrentUserDto currentUser, @PathVariable Long id, @RequestBody TimeSessionModel timeSessionModel) {
+        Long userId = currentUser.getId_user();
+        return timeSessionService.updateTimeSession(userId, id, timeSessionModel);
     }
 
 }

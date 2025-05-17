@@ -2,6 +2,7 @@ package com.time_tracker.be.service;
 
 import com.time_tracker.be.dto.TimeSessionDto;
 import com.time_tracker.be.exception.BadRequestException;
+import com.time_tracker.be.exception.ForbiddenException;
 import com.time_tracker.be.exception.NotAuthorizedException;
 import com.time_tracker.be.exception.NotFoundException;
 import com.time_tracker.be.model.ResponseModel;
@@ -140,5 +141,33 @@ public class TimeSessionService {
         return ResponseEntity.ok(responseModel);
     }
 
-    // Add more methods as needed for your application
+    // Example method to update a time session
+    public ResponseEntity<ResponseModel<TimeSessionDto>>    updateTimeSession(Long userId, Long id, TimeSessionModel timeSessionModel) {
+        // Fetch the time session by ID
+        TimeSessionModel existingTimeSession = timeSessionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Time session not found"));
+
+        // Check if the user is authorized to update this time session
+        if (!existingTimeSession.getIdUser().getId_user().equals(userId)) {
+            throw new ForbiddenException("User not authorized to update this time session");
+        }
+
+        // Update the time session details
+        existingTimeSession.setDescription(timeSessionModel.getDescription());
+
+        TimeSessionModel updatedTimeSession = timeSessionRepository.save(existingTimeSession);
+
+        TimeSessionDto timeSessionDto = TimeSessionDto.builder()
+                .idUser(userId)
+                .startTime(updatedTimeSession.getStartTime())
+                .endTime(updatedTimeSession.getEndTime())
+                .idTimeSession(updatedTimeSession.getIdTimeSession())
+                .build();
+
+        ResponseModel<TimeSessionDto> responseModel = new ResponseModel<>();
+        responseModel.setSuccess(true);
+        responseModel.setMessage("Time session updated successfully");
+        responseModel.setData(timeSessionDto);
+        return ResponseEntity.ok(responseModel);
+    }
 }
